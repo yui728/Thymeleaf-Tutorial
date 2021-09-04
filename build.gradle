@@ -4,3 +4,49 @@
  * This is a general purpose Gradle build.
  * Learn more about Gradle by exploring our samples at https://docs.gradle.org/7.2/samples
  */
+plugins {
+    id 'java'
+    id 'idea'
+    id 'application'
+}
+
+group = 'thymeleafexamples'
+// id = 'gtvg'
+sourceCompatibility = '1.11'
+targetCompatibility = '1.11'
+
+application {
+    mainClass = 'thymeleafexamples.gtvg.web.application'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src'
+        }
+        resources {
+            srcDirs = [
+                    'src/main/java/**/*.properties',
+                    'src/main/java/**/*.xml',
+                    'src/main/java/**/*.html'
+            ]
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.thymeleaf:thymeleaf:3.0.12.RELEASE'
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
+    implementation 'org.slf4j:slf4j-api:1.7.32'
+    implementation('log4j:log4j:1.2.17') {
+        exclude group: 'com.sun.jdmk', module: 'jmxtools'
+        exclude group: 'com.sun.jmx', module: 'jmxri'
+        exclude group: 'javax.jms', module: 'jms'
+    }
+
+}
+

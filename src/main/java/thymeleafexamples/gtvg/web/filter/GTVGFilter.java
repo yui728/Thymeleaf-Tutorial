@@ -33,6 +33,8 @@ public class GTVGFilter implements Filter {
                          final FilterChain chain) throws IOException, ServletException {
         addUserToSession((HttpServletRequest) request);
         if(!process((HttpServletRequest)request, (HttpServletResponse)response)) {
+            request.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html; charset=UTF-8");
             chain.doFilter(request, response);
         }
     }

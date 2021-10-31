@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Good Thymes Virtual Grocery</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" media="all"
+          href="../../css/gtvg.css" th:href="@{/css/gtvg.css}" />
+</head>
+
+<body>
+
+    <!-- <p th:text="#{home.welcome}">Welcome to our grocery store!</p> -->
+    <p th:utext="#{home.welcome(${session.user.name})}">Welcome to our grocery store!</p>
+
+    <!-- コントローラ側でフォーマットした日付を週力する場合 -->
+    <!-- <p>Today is: <span th:text="${today}">13 February 2011</span></p> -->
+
+    <!-- テンプレート側で日付をフォーマットする場合 -->
+    <p>Today is: <span th:text="${#calendars.format(today, 'dd MMMM yyyy')}">13 February 2011</span></p>
+
+</body>
+</html>

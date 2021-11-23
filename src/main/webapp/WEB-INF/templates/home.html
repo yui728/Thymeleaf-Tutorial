@@ -19,5 +19,14 @@
     <!-- テンプレート側で日付をフォーマットする場合 -->
     <p>Today is: <span th:text="${#calendars.format(today, 'dd MMMM yyyy')}">13 February 2011</span></p>
 
+    <!-- 各ページへのリンク -->
+    <p>Please select an option</p>
+　　 <ol>
+　　 	<li><a href="product/list.html" th:href="@{/product/list}">Product List</a></li>
+　　 	<li><a href="order/list.html" th:href="@{/order/list}">Order List</a></li>
+　　 	<li><a href="subscribe.html" th:href="@{/subscribe}">Subscribe to our Newsletter</a></li>
+　　     <li><a href="userprofile.html" th:href="@{/userprofile}">See User Profile</a></li>
+　　 </ol>
+
 </body>
 </html>

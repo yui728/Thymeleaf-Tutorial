@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
+<!--
 <head>
     <title>Good Thymes Virtual Grocery</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" type="text/css" media="all"
-          href="../../css/gtvg.css" th:href="@{/css/gtvg.css}" />
+      href="../../css/gtvg.css" th:href="@{/css/gtvg.css}" />
+</head>
+-->
+<!-- フラグメント定義したヘッダーを呼び出す -->
+<head th:replace="base :: common_header(~[::title], ~[::link])">
+
+    <title>Awesome - Main</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/themes/smoothness/jquery-ui.css}">
+
 </head>
 
 <body>
@@ -28,5 +39,23 @@
 　　     <li><a href="userprofile.html" th:href="@{/userprofile}">See User Profile</a></li>
 　　 </ol>
 
+    <!-- fragment 属性で定義されたフラグメントの追加 -->
+    <div th:insert="~{footer :: copy}"></div>
+    <!-- id 属性で定義されたフラグメントの追加 -->
+    <!-- <div th:insert="~{footer :: #copy-section}"></div> -->
+
+    <!-- パラメータのあるフラグメントの呼び出し -->
+    <!-- <div th:replace="::frag (${value1},${value2})">...</div> -->
+    <!--　パラメータのあるフラグメントを、変数名に紐付けて呼ぶ -->
+    <!-- <div th:replace="::frag (onevar=${value1}, twovar=${value2})">...</div> -->
+    <!-- 変数名に紐付ける場合は順不同にできる-->
+    <!-- <div th:replace="::frag (twovar=${value2}, onevar=${value1})">...</div> -->
+    <!-- th:replaceとth:withにフラグメント名とパラメータを分離できる -->
+    <!-- <div th:replace="::frag" th:with="onevar=${value1}, twovar=${value2}">...</div> -->
+
+    <!-- th:assertでパラメータの内容をチェックできる -->
+    <!--<div th:assert="${onevar}, (${twovar} != 43)">...</div> -->
+    <!-- th:assertとフラグメント呼び出しを組み合わせると、パラメータを精査できる -->
+    <!-- <header th:fragment="contentheader(title)" th:assert="${#strings.isEmpty(title)}">...</header> -->
 </body>
 </html>

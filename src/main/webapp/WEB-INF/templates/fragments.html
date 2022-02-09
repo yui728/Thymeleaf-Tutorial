@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    <div th:frangment="frag (onevar, twovar)">
+        <p th:text="${onevar} + `-` + ${twovar}">...</p>
+    </div>
+
+    <div th:fragment="frag">
+        ...
+    </div>
+</body>
+
+</html>

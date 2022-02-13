@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<!--
 <head>
     <title>Good Thymes Virtual Grocery</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" type="text/css" media="all"
       href="../../css/gtvg.css" th:href="@{/css/gtvg.css}" />
 </head>
--->
+
 <!-- フラグメント定義したヘッダーを呼び出す -->
+<!--
 <head th:replace="base :: common_header(~[::title], ~[::link])">
 
     <title>Awesome - Main</title>
@@ -18,7 +18,28 @@
     <link rel="stylesheet" th:href="@{/themes/smoothness/jquery-ui.css}">
 
 </head>
+-->
 
+<!-- 空フラグメントを使った定義の呼び出し -->
+<!--
+<head th:replace="base :: common_header(~{::title},~{})">
+
+    <title>Awesome - Main</title>
+
+</head>
+-->
+
+<!-- 処理なしトークンの使用 -->
+<!--
+<head th:replace="base :: common_header(_,~{::link})">
+
+    <title>Awesome - Main</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/themes/smoothness/jquery-ui.css}">
+
+</head>
+-->
 <body>
 
     <!-- <p th:text="#{home.welcome}">Welcome to our grocery store!</p> -->

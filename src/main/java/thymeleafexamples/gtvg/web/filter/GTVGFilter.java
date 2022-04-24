@@ -46,7 +46,7 @@ public class GTVGFilter implements Filter {
     private boolean process(HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
         try {
-
+            System.out.println("Start process method.");
             // リソースにアクセスするときは処理しない
             if(request.getRequestURI().startsWith("/css") ||
                 request.getRequestURI().startsWith("/images") ||
@@ -58,6 +58,7 @@ public class GTVGFilter implements Filter {
              * リクエストからコントローラを取得する。
              * コントローラを取得出来ない場合はfalseを返し、別のフィルタ/サーブレットにリクエストを処理させる
              */
+            System.out.println("Get Controller from request.");
             IGTVGController controller = this.application.resolveControllerForRequest(request);
             if(controller == null) {
                 return false;
@@ -66,11 +67,13 @@ public class GTVGFilter implements Filter {
             /*
              *  テンプレートエンジンのインスタンスを取得する
              */
+            System.out.println("Get template engine instance.");
             ITemplateEngine templateEngine = this.application.getTemplateEngine();
 
             /*
              * レスポンスヘッダを書き込む
              */
+            System.out.println("Write response header");
             response.setContentType("text/html;charset=UTF-8");
             response.setHeader("Pragma,", "no-cache");
             response.setHeader("Cache-Control", "no-cache");
@@ -80,6 +83,7 @@ public class GTVGFilter implements Filter {
              * コントローラとプロセスビューテンプレートを実行する
              * 結果をresponse writerに書き込む
              */
+            System.out.println("Execution Controller Process.");
             controller.process(request, response, this.servletContext, templateEngine);
 
             return true;

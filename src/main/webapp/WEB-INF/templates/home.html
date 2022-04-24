@@ -41,16 +41,23 @@
 </head>
 -->
 <body>
-
     <!-- <p th:text="#{home.welcome}">Welcome to our grocery store!</p> -->
+
     <p th:utext="#{home.welcome(${session.user.name})}">Welcome to our grocery store!</p>
 
     <!-- コントローラ側でフォーマットした日付を週力する場合 -->
     <!-- <p>Today is: <span th:text="${today}">13 February 2011</span></p> -->
 
     <!-- テンプレート側で日付をフォーマットする場合 -->
-    <p>Today is: <span th:text="${#calendars.format(today, 'dd MMMM yyyy')}">13 February 2011</span></p>
-
+    <p>
+        <!-- プロパティファイルでフォーマットを指定する場合 -->
+        Today is: <span th:with="df=#{date.format}"
+                        th:text="${#calendars.format(today, df)}">13 February 2011</span>
+        <!-- テンプレート内に直接フォーマットを指定する場合 -->
+        <!--
+        Today is: <span th:text="${#calendars.format(today, 'dd MMMM yyyy')}">13 February 2011</span>
+        -->
+    </p>
     <!-- 各ページへのリンク -->
     <p>Please select an option</p>
 　　 <ol>
@@ -59,7 +66,6 @@
 　　 	<li><a href="subscribe.html" th:href="@{/subscribe}">Subscribe to our Newsletter</a></li>
 　　     <li><a href="userprofile.html" th:href="@{/userprofile}">See User Profile</a></li>
 　　 </ol>
-
     <!-- fragment 属性で定義されたフラグメントの追加 -->
     <div th:insert="~{footer :: copy}"></div>
     <!-- id 属性で定義されたフラグメントの追加 -->

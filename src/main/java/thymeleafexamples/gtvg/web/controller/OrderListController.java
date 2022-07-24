@@ -22,12 +22,14 @@ public class OrderListController implements IGTVGController {
             ServletContext servletContext, ITemplateEngine templateEngine)
             throws Exception {
 
+//        System.out.println("OrderListController process");
         final OrderService orderService = new OrderService();
         final List<Order> allOrders = orderService.findAll();
 
         final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
         ctx.setVariable("orders", allOrders);
 
+//        System.out.println("OrderListController process templateEngine.process");
         templateEngine.process("order/list", ctx, response.getWriter());
 
     }

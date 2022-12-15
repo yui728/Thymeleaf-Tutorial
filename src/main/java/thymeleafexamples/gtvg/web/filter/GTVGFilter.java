@@ -1,19 +1,27 @@
 package thymeleafexamples.gtvg.web.filter;
 
-import org.thymeleaf.ITemplateEngine;
-import thymeleafexamples.gtvg.business.entites.User;
-import thymeleafexamples.gtvg.web.application.GTVGApplication;
-import thymeleafexamples.gtvg.web.controller.IGTVGController;
-
 import javax.servlet.*;
+import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.WebApplicationTemplateResolver;
+import org.thymeleaf.web.IWebApplication;
+import org.thymeleaf.web.IWebExchange;
+import org.thymeleaf.web.IWebRequest;
+import org.thymeleaf.web.servlet.JavaxServletWebApplication;
+import thymeleafexamples.gtvg.business.entites.User;
+import thymeleafexamples.gtvg.web.controller.IGTVGController;
+import thymeleafexamples.gtvg.web.mapping.ControllerMappings;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.Writer;
 
 public class GTVGFilter implements Filter {
 
-    private ServletContext servletContext;
-    private GTVGApplication application;
+    private JavaxServletWebApplication application;
+    private ITemplateEngine templateEngine;
 
     public GTVGFilter() {
         super();
@@ -25,13 +33,16 @@ public class GTVGFilter implements Filter {
     }
 
     public void init(final FilterConfig filterConfig) throws ServletException {
-        this.servletContext = filterConfig.getServletContext();
-        this.application = new GTVGApplication(this.servletContext);
+//        this.servletContext = filterConfig.getServletContext();
+//        this.application = new GTVGApplication(this.servletContext);
+        this.application = JavaxServletWebApplication.buildApplication(filterConfig.getServletContext());
+        this.templateEngine = buildTemplateEngine(this.application);
     }
 
     public void doFilter(final ServletRequest request, final ServletResponse response,
                          final FilterChain chain) throws IOException, ServletException {
         addUserToSession((HttpServletRequest) request);
+        System.out.println("GTVGFilter.process");
         if(!process((HttpServletRequest)request, (HttpServletResponse)response)) {
             request.setCharacterEncoding("UTF-8");
             response.setContentType("text/html; charset=UTF-8");
@@ -46,11 +57,15 @@ public class GTVGFilter implements Filter {
     private boolean process(HttpServletRequest request, HttpServletResponse response)
         throws ServletException {
         try {
+
+            final IWebExchange webExchange = this.application.buildExchange(request, response);
+            final IWebRequest webRequest = webExchange.getRequest();
+
             System.out.println("Start process method.");
             // リソースにアクセスするときは処理しない
-            if(request.getRequestURI().startsWith("/css") ||
-                request.getRequestURI().startsWith("/images") ||
-                request.getRequestURI().startsWith("/favicon")) {
+            if (webRequest.getPathWithinApplication().startsWith("/css") ||
+                    webRequest.getPathWithinApplication().startsWith("/images") ||
+                    webRequest.getPathWithinApplication().startsWith("/favicon")) {
                 return false;
             }
 
@@ -59,36 +74,34 @@ public class GTVGFilter implements Filter {
              * コントローラを取得出来ない場合はfalseを返し、別のフィルタ/サーブレットにリクエストを処理させる
              */
             System.out.println("Get Controller from request.");
-            IGTVGController controller = this.application.resolveControllerForRequest(request);
-            if(controller == null) {
+            final IGTVGController controller = ControllerMappings.resolveControllerForRequest(webRequest);
+            if (controller == null) {
                 return false;
             }
 
             /*
-             *  テンプレートエンジンのインスタンスを取得する
+             * レスポンスのメンバを書き込む
              */
-            System.out.println("Get template engine instance.");
-            ITemplateEngine templateEngine = this.application.getTemplateEngine();
-
-            /*
-             * レスポンスヘッダを書き込む
-             */
-            System.out.println("Write response header");
             response.setContentType("text/html;charset=UTF-8");
-            response.setHeader("Pragma,", "no-cache");
+            response.setHeader("Pragma", "no-cache");
             response.setHeader("Cache-Control", "no-cache");
             response.setDateHeader("Expires", 0);
+
+            /*
+             * レスポンスライターの取得
+             */
+            final Writer writer = response.getWriter();
 
             /*
              * コントローラとプロセスビューテンプレートを実行する
              * 結果をresponse writerに書き込む
              */
             System.out.println("Execution Controller Process.");
-            controller.process(request, response, this.servletContext, templateEngine);
+            controller.process(webExchange, this.templateEngine, writer);
 
             return true;
 
-        }  catch(Exception e) {
+        } catch (Exception e) {
             try {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             } catch (final IOException ignored) {
@@ -98,4 +111,25 @@ public class GTVGFilter implements Filter {
         }
     }
 
+    private static ITemplateEngine buildTemplateEngine(final IWebApplication application) {
+        final WebApplicationTemplateResolver templateResolver = new WebApplicationTemplateResolver(application);
+
+        // HTMLがデフォルトモード
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+         // "home"でアクセスしたときに"/WEB-INF/templates/home.html"を読みこむようにする
+        templateResolver.setPrefix("/WEB-INF/templates/");
+        templateResolver.setSuffix(".html");
+        // テンプレートキャッシュのTTLを1時間に設定する
+        // 設定しない場合はLRUによって破棄されるまでテンプレートキャッシュが残る
+        templateResolver.setCacheTTLMs(Long.valueOf(3600000L));
+
+        // キャッシュをtrueに設定する（デフォルト設定）
+        // テンプレートファイルが変更されたときに自動的に更新したいのであれば、キャッシュをfalseに設定する
+        templateResolver.setCacheable(true);
+
+        final TemplateEngine templateEngine = new TemplateEngine();
+        templateEngine.setTemplateResolver(templateResolver);
+
+        return templateEngine;
+    }
 }

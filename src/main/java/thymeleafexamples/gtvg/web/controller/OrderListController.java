@@ -2,12 +2,11 @@ package thymeleafexamples.gtvg.web.controller;
 
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
+import org.thymeleaf.web.IWebExchange;
 import thymeleafexamples.gtvg.business.entites.Order;
 import thymeleafexamples.gtvg.business.services.OrderService;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.Writer;
 import java.util.List;
 
 public class OrderListController implements IGTVGController {
@@ -18,19 +17,18 @@ public class OrderListController implements IGTVGController {
 
     @Override
     public void process(
-            HttpServletRequest request, HttpServletResponse response,
-            ServletContext servletContext, ITemplateEngine templateEngine)
+            final IWebExchange webExchange, final ITemplateEngine templateEngine, final Writer writer)
             throws Exception {
 
 //        System.out.println("OrderListController process");
         final OrderService orderService = new OrderService();
         final List<Order> allOrders = orderService.findAll();
 
-        final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+        final WebContext ctx = new WebContext(webExchange, webExchange.getLocale());
         ctx.setVariable("orders", allOrders);
 
 //        System.out.println("OrderListController process templateEngine.process");
-        templateEngine.process("order/list", ctx, response.getWriter());
+        templateEngine.process("order/list", ctx, writer);
 
     }
 }

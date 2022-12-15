@@ -2,13 +2,11 @@ package thymeleafexamples.gtvg.web.controller;
 
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
+import org.thymeleaf.web.IWebExchange;
 import thymeleafexamples.gtvg.business.entites.Order;
 import thymeleafexamples.gtvg.business.services.OrderService;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.net.http.HttpRequest;
+import java.io.Writer;
 
 public class OrderDetailsController implements IGTVGController {
 
@@ -17,20 +15,19 @@ public class OrderDetailsController implements IGTVGController {
     }
 
     public void process(
-            final HttpServletRequest request, final HttpServletResponse response,
-            final ServletContext servletContext, final ITemplateEngine templateEngine)
+            final IWebExchange webExchange, final ITemplateEngine templateEngine, final Writer writer)
             throws Exception {
 
-        final Integer orderId = Integer.valueOf(request.getParameter("orderId"));
+        final Integer orderId = Integer.valueOf(webExchange.getRequest().getParameterValue("orderId"));
 
         final OrderService orderService = new OrderService();
         final Order order = orderService.findById(orderId);
 
-        final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+        final WebContext ctx = new WebContext(webExchange, webExchange.getLocale());
         ctx.setVariable("order", order);
 
-        templateEngine.process("order/details", ctx, response.getWriter());
-
+        System.out.println("orderDetail: view white.");
+        templateEngine.process("order/details", ctx, writer);
     }
 
 }

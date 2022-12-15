@@ -1,15 +1,12 @@
 package thymeleafexamples.gtvg.web.controller;
 
 import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.web.IWebExchange;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.Writer;
 
 public interface IGTVGController {
 
-    public void process(
-            HttpServletRequest request, HttpServletResponse response,
-            ServletContext servletContext, ITemplateEngine templateEngine)
+    public void process(final IWebExchange webExchange, final ITemplateEngine templateEngine, final Writer writer)
             throws Exception;
 }

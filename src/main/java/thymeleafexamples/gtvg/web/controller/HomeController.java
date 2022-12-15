@@ -2,10 +2,9 @@ package thymeleafexamples.gtvg.web.controller;
 
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.WebContext;
+import org.thymeleaf.web.IWebExchange;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.Writer;
 import java.util.Calendar;
 
 public class HomeController implements IGTVGController {
@@ -15,8 +14,7 @@ public class HomeController implements IGTVGController {
     }
 
     public void process(
-            final HttpServletRequest request, final HttpServletResponse response,
-            final ServletContext servletContext, final ITemplateEngine templateEngine)
+            final IWebExchange webExchange, final ITemplateEngine templateEngine, final Writer writer)
             throws Exception {
 
         /*
@@ -25,7 +23,7 @@ public class HomeController implements IGTVGController {
         LocalDate date = LocalDate.now();
          */
         System.out.println("HomeController: Create WebContext");
-        WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
+        WebContext ctx = new WebContext(webExchange, webExchange.getLocale());
         // Controller????????????????
         // ctx.setVariable("today", date.format(dateTimeFormatter));
         // ??????????????????????
@@ -33,7 +31,7 @@ public class HomeController implements IGTVGController {
         ctx.setVariable("today", Calendar.getInstance());
 
         System.out.println("HomeController: Call TemplateEngine Process");
-        templateEngine.process("home", ctx, response.getWriter());
+        templateEngine.process("home", ctx, writer);
 
     }
 
